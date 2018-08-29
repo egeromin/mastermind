@@ -52,7 +52,11 @@ class Policy:
 
 
 if __name__ == "__main__":
+    from episode import Episode
+    import numpy as np
+    np.random.seed(123)
     p = Policy()
-    x = p([(0, 1), (2, 3), (4, 5)])
+    e = Episode(p, "0000")
+    x = p(e.generate())
     print(x.numpy())
 
