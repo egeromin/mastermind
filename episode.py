@@ -7,10 +7,12 @@ class Episode:
     start_guess = config.max_guesses
     start_feedback = config.max_feedback
     triangle_numbers = [0, 1, 3, 6, 10]
-    max_episode_length = 30
+    max_episode_length = 10
 
     def __init__(self, policy, secret):
         self.policy = policy
+        if isinstance(secret, int):
+            secret = self._number_from_index(secret)
         self.secret = secret
         self.secret_sorted = sorted(secret)
 
@@ -77,9 +79,9 @@ class Episode:
             feedback = self._index_from_feedback(
                 self._feedback_from_guess(
                     self._number_from_index(guess)))
+            episode.append((guess, feedback))
             if feedback == 14:
                 break  # this corresponds to a correct guess
-            episode.append((guess, feedback))
 
         return episode
 

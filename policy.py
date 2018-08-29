@@ -7,8 +7,6 @@ import ipdb
 import config
 
 
-tf.enable_eager_execution()
-
 
 class Policy:
     """
@@ -28,7 +26,17 @@ class Policy:
 
         self.dense = tf.layers.Dense(config.max_guesses)
 
-    def __call__(self, game_state):
+    @property
+    def variables(self):
+        """Return all the trainable parameters"""
+        return [
+            *self.guess_embedding.variables,
+            *self.feedback_embedding.variables,
+            *self.lstm.variables,
+            *self.dense.variables
+        ]
+
+    def __call__(self, game_state, with_softmax=True):
         """
         Do a forward pass to get the action distribution
         """
@@ -48,7 +56,10 @@ class Policy:
 
             output, state = self.lstm(combined_embedded, state)
 
-        return tf.nn.softmax(self.dense(output))
+        logits = self.dense(output)
+        if with_softmax:
+            return tf.nn.softmax(logits)
+        return logits
 
 
 if __name__ == "__main__":
