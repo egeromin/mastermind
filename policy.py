@@ -1,11 +1,14 @@
 import tensorflow as tf
 from tensorflow.python.keras.layers import Embedding
 from tensorflow.contrib.rnn import LSTMCell, MultiRNNCell
+import itertools
 
 import ipdb
 
 import config
 
+
+tf.enable_eager_execution()
 
 
 class Policy:
@@ -35,6 +38,13 @@ class Policy:
             *self.lstm.variables,
             *self.dense.variables
         ]
+
+    @property
+    def named_variables(self):
+        """Method to ensure variables across different 'Policy'
+        instances are named consistently"""
+        return dict(zip(map(str, itertools.count()), self.variables))
+
 
     def __call__(self, game_state, with_softmax=True):
         """
