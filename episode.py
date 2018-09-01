@@ -7,7 +7,6 @@ class Episode:
     start_guess = config.max_guesses
     start_feedback = config.max_feedback
     triangle_numbers = [0, 1, 3, 6, 10]
-    max_episode_length = 10
 
     def __init__(self, policy, secret):
         self.policy = policy
@@ -74,7 +73,7 @@ class Episode:
     def generate(self):
         episode = [(self.start_guess, self.start_feedback)]
 
-        for _ in range(self.max_episode_length):
+        for _ in range(config.max_episode_length):
             guess = self._select_next_action(self.policy(episode))
             feedback = self._index_from_feedback(
                 self._feedback_from_guess(

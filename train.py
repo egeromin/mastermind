@@ -4,6 +4,7 @@ import random
 import argparse
 import os
 import ipdb
+import sys
 
 from episode import Episode
 from policy import Policy
@@ -11,8 +12,13 @@ import config
 
 
 
-def train(num_episodes=1000, save_every=100, checkpoint_dir="checkpoints"):
+def train(num_episodes=1000, 
+          save_every=100, 
+          checkpoint_dir="checkpoints",
+          tensorboard_dir="tensorboard",
+          tboard_every=10):
     pol = Policy()
+    writer = tf.contrib.summary.create_file_writer(tensorboard_dir)
     for j in range(1, num_episodes+1):
         random_secret = random.randint(0, config.max_guesses - 1)
         e = Episode(pol, random_secret)
@@ -48,12 +54,21 @@ def train(num_episodes=1000, save_every=100, checkpoint_dir="checkpoints"):
             # https://www.tensorflow.org/api_docs/python/tf/train/GradientDescentOptimizer#args
             # can I perhaps submit a PR to fix this bug?
 
+            sys.stdout.write("{}/{}\r".format(len(history)-i, len(history)))
+
         if j % save_every == 0 or j == num_episodes:
             saver = tfe.Saver(pol.named_variables)
             save_path = os.path.join(checkpoint_dir, 
                                      "episode{}".format(
                                          str(j).zfill(len(str(num_episodes)))))
             saver.save(save_path)
+
+        if j % tboard_every == 0:
+            with writer.as_default():
+                with tf.contrib.summary.always_record_summaries():
+                    tf.contrib.summary.scalar('total_return', 
+                                              tf.convert_to_tensor([G]), 
+                                              step=j)
 
 
 if __name__ == "__main__":
@@ -67,7 +82,12 @@ if __name__ == "__main__":
                         help="Checkpoint every N episodes")
     parser.add_argument("--checkpoint_dir", help="Checkpoint directory",
                         default="checkpoints")
+    parser.add_argument("--board_dir", help="Tensorboard directory",
+                        default="tensorboard")
+    parser.add_argument("--tboard_every", type=int, default=10,
+                        help="Write to tensorboard every N episodes")
     args = parser.parse_args()
                                   
-    train(args.num_episodes, args.save_every, args.checkpoint_dir)
+    train(args.num_episodes, args.save_every, args.checkpoint_dir,
+          args.board_dir, args.tboard_every)
 
