@@ -92,16 +92,11 @@ The policy is then learned using the REINFORCE algorithm. REINFORCE loops foreve
   The rewards Rt are all set to be -1, and the maximum episode length is capped
   at 30.
 - loop for each step of the episode t=0, 1, ... T-1:
-    - <img src="http://latex.codecogs.com/gif.latex?\LARGE&space;G&space;\leftarrow&space;\sum_{k=t&plus;1}^T&space;R_k" title="\LARGE G \leftarrow \sum_{k=t+1}^T R_k" />
-    - <img src="http://latex.codecogs.com/gif.latex?\LARGE&space;\theta&space;\leftarrow&space;\theta&space;&plus;&space;\alpha&space;\gamma^t&space;G&space;\nabla_\theta&space;\ln&space;\pi(A_t&space;|&space;S_t,&space;\theta)" title="\LARGE \theta \leftarrow \theta + \alpha \gamma^t G \nabla_\theta \ln \pi(A_t | S_t, \theta)" />
+    - <img src="http://latex.codecogs.com/gif.latex?G&space;\leftarrow&space;\sum_{k=t&plus;1}^T&space;R_k" title="\LARGE G \leftarrow \sum_{k=t+1}^T R_k" />
+    - <img src="http://latex.codecogs.com/gif.latex?\theta&space;\leftarrow&space;\theta&space;&plus;&space;\alpha&space;\gamma^t&space;G&space;\nabla_\theta&space;\ln&space;\pi(A_t&space;|&space;S_t,&space;\theta)" title="\LARGE \theta \leftarrow \theta + \alpha \gamma^t G \nabla_\theta \ln \pi(A_t | S_t, \theta)" />
 
 Here gamma is the discount factor, which we set to 1, and alpha is a parameter, currently set to 0.001.
 The grad is taken with respect to theta, our set of model parameters.
-
-[//]: # (original latex equations:)
-[//]: # (G \leftarrow \sum_{k=t+1}^T R_k)
-[//]: # (\theta \leftarrow \theta + \alpha \gamma^t G \nabla_\theta \ln \pi(A_t | S_t, \theta))
-[//]: # ( \ln \pi(A_t | S_t, \theta) &=  \sum_a 1_{A_t} \ln \pi(a | S_t, \theta) \\ &= - \text{cross-entropy}(1_{A_t}, \pi(\cdot | S_t, \theta)))
 
 To implement this update easily using tensorflow, we can use the traditional
 cross-entropy loss, since
