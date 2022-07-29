@@ -41,7 +41,7 @@ Mako==1.0.3
 Markdown==2.6.11
 MarkupSafe==0.23
 matplotlib==2.2.2
-mistune==0.8.3
+mistune==2.0.3
 nbconvert==5.3.1
 nbformat==4.4.0
 notebook==5.4.1
